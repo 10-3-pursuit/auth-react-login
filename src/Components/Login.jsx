@@ -1,5 +1,10 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+
+import "../Components/Login.css"
+import Header from "./Header";
+
+
 const URL = import.meta.env.VITE_BASE_URL;
 const Login = () => {
   const navigate = useNavigate();
@@ -25,15 +30,32 @@ const Login = () => {
       body: JSON.stringify(user),
     };
 
+    // next 3 lines are to see/test data - we want to save this to a state variable for logged in user
+    // once looged in state variable witll update with logged in user's info
+    // fetch(`${URL}/api/auth/login`, options)
+    //   .then((res) => res.json())
+    //   .then((data) => console.log(data));
     try {
       const res = await fetch(`${URL}/api/auth/login`, options);
+      const data = await res.json();
+
+
+    try {
+      const res = await fetch(`${URL}/api/auth/login`, options);
+
       if (!res.ok) {
         alert("Login failed");
         setUser({ username: "", password: "" });
         throw new Error("Registration failed");
       }
 
+      // change line 44  when we create the tutors perspective
+      console.log(data)
+      if (!data.user_details.is_tutor) navigate("/dashboard");
+
+
       navigate("/dashboard");
+
     } catch (error) {
       console.error("Error during registration:", error);
     }
@@ -73,14 +95,13 @@ const Login = () => {
 
   return (
     <div>
-      <h2>Use the DemoUser button to login and save time during demo</h2>
-      <h3> Remove the 'br' tags and these instructions if you use this code</h3>
-      <button onClick={handleDemoSignIn}>Demo User</button>
-      <br />
-      <br />
-      <br />
-      <h4>Login</h4>
+      <Header/>
+      
+    <div className="login-body">
+    <div className="wrapper">
+      <h1>Login</h1>
       <form onSubmit={handleSubmit}>
+        <div className="input-box">
         <label htmlFor="username">
           <input
             id="username"
@@ -91,7 +112,9 @@ const Login = () => {
             onChange={handleChange}
           />
         </label>
+        </div>
         <br />
+        <div className="input-box">
         <label htmlFor="password">
           <input
             id="password"
@@ -102,12 +125,17 @@ const Login = () => {
             autoComplete="current-password"
           />
         </label>
+        </div>
         <br />
-        <button>Submit</button>
+        <button type="submit" class="btn">Login</button>
       </form>
+        <div className="register-link">
       <p>
         No Account? <Link to="/register">Register</Link>
       </p>
+        </div>
+    </div>
+    </div>
     </div>
   );
 };
